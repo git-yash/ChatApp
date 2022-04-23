@@ -1,23 +1,32 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import {KeyboardAvoidingView, StyleSheet, Text, TextInput, TouchableOpacity, View} from "react-native";
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
 import {auth} from "../firebase-config";
 
-const LoginScreen = () => {
+const LoginScreen = (props: {navigation: any}) => {
+    const {navigation} = props;
+
+    const [isSignedIn, setIsSignedIn] = useState(false);
+
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+
+    useEffect(() => {
+        if(isSignedIn){
+            navigation.replace("Home")
+        }
+    }, []);
 
     const handleSignUp = () => {
         createUserWithEmailAndPassword(auth, email, password)
             .then((userCredential) => {
                 // Signed in
                 const user = userCredential.user;
-                // ...
+                setIsSignedIn(true);
+                navigation.replace("Home");
             })
             .catch((error) => {
-                const errorCode = error.code;
-                const errorMessage = error.message;
-                // ..
+                console.log(error.message);
             });
     }
 
@@ -26,11 +35,11 @@ const LoginScreen = () => {
             .then((userCredential) => {
                 // Signed in
                 const user = userCredential.user;
-                // ...
+                setIsSignedIn(true);
+                navigation.replace("Home");
             })
             .catch((error) => {
-                const errorCode = error.code;
-                const errorMessage = error.message;
+                console.log(error.message);
             });
     }
 
@@ -53,7 +62,7 @@ const LoginScreen = () => {
             </View>
             <View style={styles.buttonContainer}>
                 <TouchableOpacity
-                    onPress={() => {}}
+                    onPress={() => {handleSignIn()}}
                     style={styles.button}
                 >
                     <Text style={styles.buttonText}>Login</Text>
